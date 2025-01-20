@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Account Settings
+
+        <link rel="icon" href="icon_path" type="image/icon type">
+    </title>
+    <link rel="stylesheet" href="../CSS/settings.css">
+</head>
+<body>
+    <nav class="top-nav">
+        <div class="nav-content">
+            
+            <div class="nav-links">
+                <a href="homePage.html"><button>Home</button></a>
+                <button id="logoutBtn">Logout</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Rest of the HTML remains the same -->
+    <div class="settings-container">
+        <div class="settings-sidebar">
+            <div class="profile-preview">
+                <div class="avatar">
+                    <span id="avatarInitials"></span>
+                </div>
+                <div class="user-info">
+                    <span id="userDisplayName"></span>
+                    <span id="accountTypeDisplay" class="account-badge"></span>
+                </div>
+            </div>
+            <nav class="settings-nav">
+                <button class="nav-item active" data-section="profile">Profile Settings</button>
+                <button class="nav-item" data-section="security">Security</button>
+                <button class="nav-item" data-section="preferences">Preferences</button>
+            </nav>
+        </div>
+
+        <div class="settings-content">
+            <!-- Profile Settings Section -->
+            <section id="profile" class="settings-section active">
+                <h2>Profile Settings</h2>
+                <form id="profileForm">
+                    <div class="form-group">
+                        <label for="username">Username</label>
+                        <input type="text" id="username" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email Address</label>
+                        <input type="email" id="email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="bio">Bio</label>
+                        <textarea id="bio" rows="4"></textarea>
+                    </div>
+                    <button type="submit">Save Profile</button>
+                </form>
+            </section>
+
+            <!-- Security Section -->
+            <section id="security" class="settings-section">
+                <h2>Security Settings</h2>
+                <form id="securityForm">
+                    <div class="form-group">
+                        <label for="currentPassword">Current Password</label>
+                        <input type="password" id="currentPassword">
+                    </div>
+                    <div class="form-group">
+                        <label for="newPassword">New Password</label>
+                        <input type="password" id="newPassword">
+                    </div>
+                    <div class="form-group">
+                        <label for="confirmPassword">Confirm New Password</label>
+                        <input type="password" id="confirmPassword">
+                    </div>
+                    <button type="submit">Update Password</button>
+                </form>
+                <div class="danger-zone">
+                    <h3>Danger Zone</h3>
+                    <button id="deleteAccountBtn" class="delete-btn">Delete Account</button>
+                </div>
+            </section>
+
+            <!-- Preferences Section -->
+            <section id="preferences" class="settings-section">
+                <h2>Preferences</h2>
+                <form id="preferencesForm">
+                    <div class="form-group">
+                        <label for="accountType">Account Type</label>
+                        <select id="accountType">
+                            <option value="standard">Standard Account</option>
+                            <option value="premium">Premium Account</option>
+                        </select>
+                    </div>
+                    <div class="form-group checkbox-group">
+                        <label>
+                            <input type="checkbox" id="emailNotifications">
+                            Receive email notifications
+                        </label>
+                    </div>
+                    <div class="form-group checkbox-group">
+                        <label>
+                            <input type="checkbox" id="darkMode">
+                            Enable dark mode
+                        </label>
+                    </div>
+                    <button type="submit">Save Preferences</button>
+                </form>
+            </section>
+        </div>
+    </div>
+    <script src="../JS/settings.js"></script>
+</body>
+</html>

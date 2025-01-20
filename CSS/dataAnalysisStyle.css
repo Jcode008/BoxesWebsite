@@ -1,0 +1,40 @@
+.upload-container {
+    background-color: white;
+    padding: 30px;
+    border-radius: 18px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+.upload-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+.file-input {
+    padding: 10px;
+    border: 2px dashed #ccc;
+    border-radius: 4px;
+}
+.submit-btn {
+    background-color: #007bff;
+    color: white;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+}
+.submit-btn:hover {
+    background-color: #0056b3;
+}
+#status {
+    margin-top: 20px;
+    padding: 10px;
+    border-radius: 4px;
+}
+.success {
+    background-color: #d4edda;
+    color: #155724;
+}
+.error {
+    background-color: #f8d7da;
+    color: #721c24;
+}

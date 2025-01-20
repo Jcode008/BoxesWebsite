@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login System</title>
+    <link rel="stylesheet" href="../CSS/loginStyle.css">
+</head>
+<body>
+    <div class="container">
+        <div class="tabs">
+            <button class="tab-btn active" data-tab="login">Login</button>
+            <button class="tab-btn" data-tab="register">Register</button>
+        </div>
+
+        <div class="form-container" id="login-form">
+            <h2>Login</h2>
+            <form id="loginForm">
+                <input type="email" placeholder="Email" id="loginEmail" required>
+                <input type="password" placeholder="Password" id="loginPassword" required>
+                <button type="submit">Login</button>
+            </form>
+        </div>
+
+        <div class="form-container hidden" id="register-form">
+            <h2>Register</h2>
+            <form id="registerForm">
+                <input type="text" placeholder="Username" id="registerUsername" required>
+                <input type="email" placeholder="Email" id="registerEmail" required>
+                <input type="password" placeholder="Password" id="registerPassword" required>
+                <select id="accountType">
+                    <option value="standard">Standard Account</option>
+                    <option value="premium">Premium Account</option>
+                </select>
+                <button type="submit">Register</button>
+            </form>
+        </div>
+
+        <div class="dashboard hidden" id="dashboard">
+            <h2>Welcome <span id="userDisplayName"></span></h2>
+            <p>Account Type: <span id="accountTypeDisplay"></span></p>
+            <button id="logoutBtn">Logout</button>
+        </div>
+    </div>
+   <!-- Loading Spinner -->
+   <div id="loadingSpinner" class="loading-spinner">
+    <div class="spinner"></div>
+  </div>
+ 
+  
+    <script src="../JS/login.js"></script>
+</body>
+</html>

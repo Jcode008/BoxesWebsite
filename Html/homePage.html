@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home</title>
+    <link rel="stylesheet" href="../CSS/homePagestyle.css">
+    <link rel="icon" href="../Media/BoxesLogo-removebg-preview.png" class="icon"  type="image/png">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    
+    <!-- Hamburger Menu Icon -->
+    <div class="menu-icon" onclick="toggleMenu()">☰</div>
+
+    <!-- Sidebar Navigation -->
+    <div class="sidebar" id="sidebar">
+        <a href = "./homePage.html"><button class="nav-button">🏠 Home</button></a>
+        <a href="./dataAnalysis.html"><button class="nav-button">🔍 Data Analysis</button></a>
+        <button class="nav-button">placeholder</button>
+        
+        <button class="nav-button">📊 Statistics</button>
+        <a href = "./Chatbot.html"> <button class="nav-button">❓ Help Center</button></a>
+        <a href = "accountSettings.html"><button class = "nav-button">⚙️ Settings</button></a>
+        
+        
+      
+        <button class="nav-button">📞 Contact Us</button>
+    </div>
+    <script src="../JS/ChatBot.js"></script>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <header>
+            <h1>Welcome to Boxes</h1>
+            <p class="subheading">Your portal to data analysis</p>
+        </header>
+    </div>
+
+    <script>
+        function toggleMenu() {
+            const sidebar = document.getElementById('sidebar');
+            const menuIcon = document.querySelector('.menu-icon');
+            
+            sidebar.classList.toggle('open');
+            menuIcon.classList.toggle('open');
+        }
+
+        // Close sidebar when clicking outside
+        document.addEventListener('click', function(event) {
+            const sidebar = document.getElementById('sidebar');
+            const menuIcon = document.querySelector('.menu-icon');
+            
+            if (!sidebar.contains(event.target) && 
+                !menuIcon.contains(event.target) && 
+                sidebar.classList.contains('open')) {
+                sidebar.classList.remove('open');
+                menuIcon.classList.remove('open');
+            }
+        });
+    </script>
+
+
+
+
+</body>
+</html>

@@ -1,0 +1,57 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html, body {
+    height: 100vh; /* Ensure the body takes up the full viewport height */
+    width: 100%;   /* Ensure the body takes up the full width */
+    display: flex;
+    justify-content: center; /* Center content horizontally */
+    align-items: center;     /* Center content vertically */
+    font-family: 'Roboto', sans-serif;
+    background-color: #f4f4f4;
+    background: url('../Media/abstract-marble-texture-black-white-grey-background-handmade-technique.jpg');
+    color: #333;
+    overflow: hidden; /* Prevent scrolling */
+    flex-direction: column; /* Stack heading and subheading vertically */
+    text-align: center; /* Ensure text is centered inside these elements */
+}
+
+h1, .subheading {
+    opacity: 0;  /* Initially invisible */
+    transform: translateY(50px);  /* Start from below */
+    transition: opacity 2s ease, transform 2s ease; /* Smooth transition */
+    margin: 0;  /* Remove any default margins */
+}
+
+h1 {
+    font-size: 5rem;
+    color: #0e0074;
+    margin-bottom: 20px; /* Some spacing between title and subheading */
+}
+
+.subheading {
+    font-size: 1.2rem;
+    color: #666;
+    margin-top: 10px;
+}
+
+/* Animation for fade-in effect (triggered later) */
+h1.fade-in, .subheading.fade-in {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Slide-out states for heading and subheading */
+h1.slide-out {
+    transform: translateY(-100vh) !important;
+    opacity: 0 !important;
+}
+
+.subheading.slide-out {
+    transform: translateY(100vh) !important;
+    opacity: 0 !important;
+}
+

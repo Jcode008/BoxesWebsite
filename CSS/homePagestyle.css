@@ -1,0 +1,118 @@
+/* Global Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+icon {
+    width: 500px;
+    height: auto;
+}
+body {
+    font-family: 'Roboto', sans-serif;
+    background-color: #f4f4f4;
+    background: url('../Media/abstract-marble-texture-black-white-grey-background-handmade-technique.jpg') ;
+    color: #333;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    text-align: center;
+    overflow-x: hidden; /* Prevent horizontal scroll when sidebar is open */
+}
+
+/* Header Styles */
+header {
+    font-size: 20rem;
+    margin-bottom: 40px;
+}
+
+h1 {
+    font-size: 5rem;
+    color: #0e0074;
+    margin-bottom: 10px;
+}
+
+.subheading {
+    font-size: 1.2rem;
+    color: #666;
+}
+
+/* Hamburger Menu Icon */
+.menu-icon {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    font-size: 30px;
+    cursor: pointer;
+    color: #0e0074;
+    z-index: 1000;
+    transition: transform 0.3s ease;
+}
+
+/* Rotate hamburger menu when sidebar is open */
+.menu-icon.open {
+    transform: rotate(90deg);
+}
+
+/* Sidebar Styles */
+.sidebar {
+    position: fixed;
+    top: 0;
+    left: -280px; /* Start off-screen */
+    height: 100vh;
+    width: 280px;
+    background-color: #0e0074;
+    padding-top: 80px;
+    transition: left 0.3s ease;
+    z-index: 999;
+    box-shadow: 4px 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.sidebar.open {
+    left: 0;
+}
+
+/* Navigation Buttons */
+.nav-button {
+    display: block;
+    width: 85%;
+    margin: 12px auto;
+    padding: 15px 20px;
+    background-color: transparent;
+    color: white;
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    font-size: 1.1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-align: left;
+}
+
+.nav-button:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    transform: translateX(10px);
+}
+
+/* Main Content */
+.main-content {
+    transition: margin-left 0.3s ease;
+    padding: 20px;
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+    .sidebar {
+        width: 240px;
+    }
+
+    h1 {
+        font-size: 2.2rem;
+    }
+
+    .nav-button {
+        font-size: 1rem;
+        padding: 12px 16px;
+    }
+}
