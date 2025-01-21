@@ -10,6 +10,13 @@ const loadingSpinner = document.getElementById('loadingSpinner');
 
 hideLoadingSpinner();
 
+// Add error display element to login form HTML
+const errorDisplay = document.createElement('div');
+errorDisplay.id = 'errorMessage';
+errorDisplay.style.color = 'red';
+errorDisplay.style.marginTop = '10px';
+document.getElementById('loginForm').appendChild(errorDisplay);
+
 /**
  * Event listener for the login form submission.
  * Prevents the default form submission behavior, retrieves the email and password values,
@@ -21,10 +28,11 @@ hideLoadingSpinner();
  */
 document.getElementById('loginForm').addEventListener('submit', async (e) => {
     e.preventDefault();
+    errorDisplay.textContent = ''; // Clear previous errors
     
     const API_URL = window.location.hostname === 'localhost' 
         ? 'http://localhost:3000'
-        : 'https://boxes-vxnc.onrender.com';
+        : 'https://ampproject.onrender.com';
 
     try {
         const response = await fetch(`${API_URL}/api/auth/login`, {
@@ -41,24 +49,22 @@ document.getElementById('loginForm').addEventListener('submit', async (e) => {
         const data = await response.json();
         
         if (!response.ok) {
-            throw new Error(data.error || 'Login failed');
+            errorDisplay.textContent = 'Incorrect email or password';
+            return;
         }
 
         if (data.token) {
-            // Store auth data only if we received a valid token
             localStorage.setItem('authToken', data.token);
             localStorage.setItem('username', data.username);
             localStorage.setItem('accountType', data.accountType);
-
-            console.log('Login successful');
             window.location.href = '../Html/homePage.html';
         } else {
-            throw new Error('Invalid credentials');
+            errorDisplay.textContent = 'Login failed. Please try again.';
         }
         
     } catch (error) {
         console.error('Login error:', error);
-        alert('Login failed: ' + error.message);
+        errorDisplay.textContent = 'Login failed. Please try again.';
     }
 });
 
@@ -76,7 +82,7 @@ document.getElementById('registerForm').addEventListener('submit', async (e) => 
     
     const API_URL = window.location.hostname === 'localhost' 
         ? 'http://localhost:3000'
-        : 'https://ampproject.onrender.com';
+        : 'https://boxes-vxnc.onrender.com/';
 
     try {
         console.log('Attempting registration...');

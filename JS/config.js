@@ -4,7 +4,7 @@ const API_URL = process.env.NODE_ENV === 'production'
 
 const config = {
     API_URL: process.env.NODE_ENV === 'production' 
-        ? 'https://your-render-app.onrender.com'
+        ? 'https://boxes-vxnc.onrender.com/'
         : 'http://localhost:3000'
 };
 
