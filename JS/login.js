@@ -58,7 +58,10 @@ document.getElementById('loginForm').addEventListener('submit', async (e) => {
             localStorage.setItem('authToken', data.token);
             localStorage.setItem('username', data.username);
             localStorage.setItem('accountType', data.accountType);
-            window.location.href = '../Html/homePage.html';
+            setTimeout(() => {
+                window.location.href = '../Html/homePage.html';
+                hideLoadingSpinner();
+            }, 5000);
         } else {
             errorDisplay.textContent = 'Login failed. Invalid response from server.';
         }
@@ -181,9 +184,6 @@ window.addEventListener('DOMContentLoaded', () => {
     const token = localStorage.getItem('authToken');
     if (token) {
         showLoadingSpinner();
-        setTimeout(() => {
-            window.location.href = '../Html/homePage.html';
-            hideLoadingSpinner();
-        }, 1000);
+      
     }
 });
