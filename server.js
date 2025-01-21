@@ -17,7 +17,7 @@ console.log('Checking environment:', {
 
 // Middleware
 app.use(cors({
-    origin: ['https://ampproject.onrender.com', 'http://localhost:3000'],
+    origin: ['https://boxes-vxnc.onrender.com', 'http://localhost:3000'],
     methods: ['GET', 'POST', 'PATCH', 'DELETE'],
     credentials: true,
     allowedHeaders: ['Content-Type', 'Authorization', 'Accept']

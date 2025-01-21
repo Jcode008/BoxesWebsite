@@ -24,7 +24,7 @@ document.getElementById('loginForm').addEventListener('submit', async (e) => {
     
     const API_URL = window.location.hostname === 'localhost' 
         ? 'http://localhost:3000'
-        : 'https://ampProject.onrender.com';
+        : 'https://boxes-vxnc.onrender.com';
 
     try {
         const response = await fetch(`${API_URL}/api/auth/login`, {

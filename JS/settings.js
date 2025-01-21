@@ -14,7 +14,7 @@ async function loadUserProfile() {
     try {
         const API_URL = window.location.hostname === 'localhost' 
             ? 'http://localhost:3000'
-            : 'https://ampProject.onrender.com';
+            : 'https://boxes-vxnc.onrender.com';
 
         const response = await fetch(`${API_URL}/api/profile`, {
             headers: {
