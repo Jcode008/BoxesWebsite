@@ -1,27 +1,28 @@
 require('dotenv').config();
 const express = require('express');
-const mongoose = require('mongoose');
 const cors = require('cors');
+const mongoose = require('mongoose');
+const authRoutes = require('./routes/auth');
 const { OpenAI } = require('openai');  // Fix import
 const path = require('path');
 
 const app = express();
-const port = process.env.PORT || 3000;
-
-
-const express = require('express');
-const cors = require('cors');
-require('dotenv').config();
-
 
 app.use(cors());
 app.use(express.json());
-
-// Routes
-app.use('/api/auth', require('./routes/auth'));
+app.use('/api/auth', authRoutes);
 
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+
+mongoose.connect(process.env.MONGODB_URI)
+    .then(() => {
+        console.log('Connected to MongoDB');
+        app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+    })
+    .catch(err => {
+        console.error('MongoDB connection error:', err);
+        process.exit(1);
+    });
 
 // Verify environment variables
 console.log('Checking environment:', {
@@ -40,35 +41,6 @@ app.use(cors({
 app.use(express.json());
 app.use(express.static(path.join(__dirname)));
 
-// MongoDB Atlas connection
-const connectDB = async () => {
-    try {
-        const mongoUri = 'mongodb+srv://jodeety:qhU9P8gH50cgvSFd@cluster0.e4d0kjv.mongodb.net/boxesdb';
-
-        await mongoose.connect(mongoUri, {
-            useNewUrlParser: true,
-            useUnifiedTopology: true,
-            serverSelectionTimeoutMS: 5000,
-            connectTimeoutMS: 10000,
-            retryWrites: true,
-            w: 'majority',
-            ssl: true,
-            directConnection: false
-        });
-        console.log('MongoDB Atlas Connected');
-    } catch (err) {
-        console.error('MongoDB Connection Error:', err);
-        // Add retry logic
-        setTimeout(() => {
-            console.log('Retrying connection...');
-            connectDB();
-        }, 5000);
-    }
-};
-
-// Retry connection
-connectDB().catch(console.error);
-
 // OpenAI setup with error handling
 let openai;
 try {
@@ -81,12 +53,7 @@ try {
 }
 
 // Routes
-app.use('/api/auth', require('./routes/auth'));
 app.use('/api/chat', require('./routes/chat'));
 app.use('/api/profile', require('./routes/profile'));
-
-app.listen(port, '0.0.0.0', () => {
-    console.log(`Server running on port ${port}`);
-});
 
 module.exports = app;
