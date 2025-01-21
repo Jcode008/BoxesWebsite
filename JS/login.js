@@ -2,7 +2,9 @@
  * URL of the API endpoint.
  * @constant {string}
  */
-const API_URL = 'http://localhost:3000/api';
+const API_URL = window.location.hostname === 'localhost' 
+    ? 'http://localhost:3000'
+    : 'https://boxes-vxnc.onrender.com'; // Remove trailing slash
 
 
 const loadingSpinner = document.getElementById('loadingSpinner');
@@ -30,15 +32,12 @@ document.getElementById('loginForm').addEventListener('submit', async (e) => {
     e.preventDefault();
     errorDisplay.textContent = ''; // Clear previous errors
     
-    const API_URL = window.location.hostname === 'localhost' 
-        ? 'http://localhost:3000'
-        : 'https://boxes-vxnc.onrender.com/';
-
     try {
         const response = await fetch(`${API_URL}/api/auth/login`, {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
             },
             body: JSON.stringify({
                 email: document.getElementById('loginEmail').value,
@@ -46,10 +45,16 @@ document.getElementById('loginForm').addEventListener('submit', async (e) => {
             })
         });
 
+        // Check if response is JSON before parsing
+        const contentType = response.headers.get('content-type');
+        if (!contentType || !contentType.includes('application/json')) {
+            throw new Error('Server response was not JSON');
+        }
+
         const data = await response.json();
         
         if (!response.ok) {
-            errorDisplay.textContent = 'Incorrect email or password';
+            errorDisplay.textContent = data.error || 'Incorrect email or password';
             return;
         }
 
@@ -58,13 +63,10 @@ document.getElementById('loginForm').addEventListener('submit', async (e) => {
             localStorage.setItem('username', data.username);
             localStorage.setItem('accountType', data.accountType);
             window.location.href = '../Html/homePage.html';
-        } else {
-            errorDisplay.textContent = 'Login failed. Please try again.';
         }
-        
     } catch (error) {
         console.error('Login error:', error);
-        errorDisplay.textContent = 'Login failed. Please try again.';
+        errorDisplay.textContent = 'Server error. Please try again later.';
     }
 });
 
