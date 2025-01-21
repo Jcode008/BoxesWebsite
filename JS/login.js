@@ -184,6 +184,9 @@ window.addEventListener('DOMContentLoaded', () => {
     const token = localStorage.getItem('authToken');
     if (token) {
         showLoadingSpinner();
-      
+        setTimeout(() => {
+            window.location.href = '../Html/homePage.html';
+            hideLoadingSpinner();
+        }, 5000);
     }
 });
