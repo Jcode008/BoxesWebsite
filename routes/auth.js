@@ -7,10 +7,21 @@ const User = require('../models/User');
 router.post('/login', async (req, res) => {
     try {
         const { email, password } = req.body;
+        
+        // Add validation
+        if (!email || !password) {
+            return res.status(400).json({ error: 'Email and password are required' });
+        }
+
         // Add login logic here
-        res.json({ token: 'test-token' });
+        res.json({ 
+            token: 'token',
+            username: 'username',
+            accountType: 'user'
+        });
     } catch (error) {
-        res.status(500).json({ error: error.message });
+        console.error('Login error:', error);
+        res.status(500).json({ error: 'Server error' });
     }
 });
 
