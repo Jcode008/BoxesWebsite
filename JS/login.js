@@ -44,13 +44,17 @@ document.getElementById('loginForm').addEventListener('submit', async (e) => {
             throw new Error(data.error || 'Login failed');
         }
 
-        // Store auth data
-        localStorage.setItem('authToken', data.token);
-        localStorage.setItem('username', data.username);
-        localStorage.setItem('accountType', data.accountType);
+        if (data.token) {
+            // Store auth data only if we received a valid token
+            localStorage.setItem('authToken', data.token);
+            localStorage.setItem('username', data.username);
+            localStorage.setItem('accountType', data.accountType);
 
-        console.log('Login successful');
-        window.location.href = '../Html/homePage.html';
+            console.log('Login successful');
+            window.location.href = '../Html/homePage.html';
+        } else {
+            throw new Error('Invalid credentials');
+        }
         
     } catch (error) {
         console.error('Login error:', error);
