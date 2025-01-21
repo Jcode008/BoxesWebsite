@@ -45,28 +45,26 @@ document.getElementById('loginForm').addEventListener('submit', async (e) => {
             })
         });
 
-        // Check if response is JSON before parsing
-        const contentType = response.headers.get('content-type');
-        if (!contentType || !contentType.includes('application/json')) {
-            throw new Error('Server response was not JSON');
-        }
-
         const data = await response.json();
         
+        // Check response status first
         if (!response.ok) {
             errorDisplay.textContent = data.error || 'Incorrect email or password';
-            return;
+            return; // Stop execution here if login failed
         }
 
-        if (data.token) {
+        // Only proceed if we have valid token
+        if (data.token && data.username && data.accountType) {
             localStorage.setItem('authToken', data.token);
             localStorage.setItem('username', data.username);
             localStorage.setItem('accountType', data.accountType);
             window.location.href = '../Html/homePage.html';
+        } else {
+            errorDisplay.textContent = 'Login failed. Invalid response from server.';
         }
     } catch (error) {
         console.error('Login error:', error);
-        errorDisplay.textContent = 'Server error. Please try again later.';
+        errorDisplay.textContent = 'Server error. Please try again.';
     }
 });
 
