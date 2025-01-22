@@ -1,4 +1,3 @@
-
 const express = require('express');
 const router = express.Router();
 const jwt = require('jsonwebtoken');
@@ -44,6 +43,8 @@ router.post('/login', async (req, res) => {
 
 router.post('/register', async (req, res) => {
     try {
+        console.log('Register request:', req.body);
+        
         const { username, email, password, accountType } = req.body;
         
         if (!username || !email || !password) {
@@ -56,11 +57,12 @@ router.post('/register', async (req, res) => {
         
         if (existingUser) {
             return res.status(400).json({ 
-                error: 'Email or username already registered' 
+                error: 'Email or username already exists' 
             });
         }
 
         const hashedPassword = await bcrypt.hash(password, 10);
+        
         const user = new User({
             username,
             email,
@@ -69,10 +71,12 @@ router.post('/register', async (req, res) => {
         });
 
         await user.save();
+        console.log('User registered:', username);
+        
         res.status(201).json({ message: 'Registration successful' });
     } catch (error) {
         console.error('Registration error:', error);
-        res.status(500).json({ error: 'Registration failed' });
+        res.status(500).json({ error: error.message });
     }
 });
 

@@ -85,13 +85,8 @@ document.getElementById('registerForm').addEventListener('submit', async (e) => 
     e.preventDefault();
     errorDisplay.textContent = '';
     showLoadingSpinner();
-    
-    const API_URL = window.location.hostname === 'localhost' 
-        ? 'http://localhost:3000'
-        : 'https://boxes-vxnc.onrender.com/';
 
     try {
-        console.log('Attempting registration...');
         const registerData = {
             username: document.getElementById('registerUsername').value,
             email: document.getElementById('registerEmail').value,
@@ -103,25 +98,22 @@ document.getElementById('registerForm').addEventListener('submit', async (e) => 
         const response = await fetch(`${API_URL}/api/auth/register`, {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json'
+                'Content-Type': 'application/json'
             },
             body: JSON.stringify(registerData)
         });
 
-        console.log('Register response status:', response.status);
-        const data = await response.json();
-        
         if (!response.ok) {
-            throw new Error(data.error || 'Registration failed');
+            const error = await response.text();
+            throw new Error(error);
         }
 
+        const data = await response.json();
         alert('Registration successful! Please log in.');
         switchToTab('login');
-        
     } catch (error) {
         console.error('Registration error:', error);
-        alert('Registration failed: ' + error.message);
+        errorDisplay.textContent = 'Registration failed: ' + error.message;
     } finally {
         hideLoadingSpinner();
     }
