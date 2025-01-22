@@ -21,7 +21,7 @@ const userSchema = new mongoose.Schema({
     },
     accountType: {
         type: String,
-        enum: ['user', 'admin'],
+        enum: ['standard', 'admin', "premium"],
         default: 'user'
     },
     createdAt: {
