@@ -101,4 +101,30 @@ router.get('/profile', async (req, res) => {
     }
 });
 
+router.patch('/password', async (req, res) => {
+    try {
+        const token = req.headers.authorization.split(' ')[1];
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        
+        const { currentPassword, newPassword } = req.body;
+        const user = await User.findById(decoded.userId);
+
+        if (!user) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+
+        const isValidPassword = await bcrypt.compare(currentPassword, user.password);
+        if (!isValidPassword) {
+            return res.status(401).json({ error: 'Current password is incorrect' });
+        }
+
+        user.password = await bcrypt.hash(newPassword, 10);
+        await user.save();
+
+        res.json({ message: 'Password updated successfully' });
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to update password' });
+    }
+});
+
 module.exports = router;

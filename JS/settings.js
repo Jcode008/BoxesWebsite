@@ -100,8 +100,12 @@ document.getElementById('profileForm').addEventListener('submit', async (e) => {
 document.getElementById('securityForm').addEventListener('submit', async (e) => {
     e.preventDefault();
     
-    const token = localStorage.getItem('token');
-    if (!token) return;
+    const token = localStorage.getItem('authToken'); // Changed from 'token'
+    if (!token) {
+        alert('Please login again');
+        window.location.href = '../Html/LoginPage.html';
+        return;
+    }
 
     const currentPassword = document.getElementById('currentPassword').value;
     const newPassword = document.getElementById('newPassword').value;
@@ -113,24 +117,28 @@ document.getElementById('securityForm').addEventListener('submit', async (e) => 
     }
 
     try {
-        const response = await fetch(`${API_URL}/password`, {
+        const response = await fetch(`${API_URL}/api/auth/password`, {
             method: 'PATCH',
             headers: {
                 'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ currentPassword, newPassword })
+            body: JSON.stringify({ 
+                currentPassword, 
+                newPassword 
+            })
         });
 
+        const data = await response.json();
+
         if (!response.ok) {
-            const data = await response.json();
-            throw new Error(data.error);
+            throw new Error(data.error || 'Failed to update password');
         }
 
         alert('Password updated successfully!');
         document.getElementById('securityForm').reset();
     } catch (error) {
-        alert(error.message || 'Failed to update password');
+        alert(error.message);
     }
 });
 
