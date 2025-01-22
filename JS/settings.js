@@ -1,9 +1,12 @@
 const BASE_PATH = window.location.origin;
-const API_URL = 'http://localhost:3000/api';
+const API_URL = window.location.hostname === 'localhost' 
+    ? 'http://localhost:3000'
+    : 'https://boxes-vxnc.onrender.com';
 
 // Initialize page with user data
 async function loadUserProfile() {
     const token = localStorage.getItem('authToken');
+    const username = localStorage.getItem('username');
     
     if (!token) {
         console.log('No auth token found');
@@ -12,13 +15,11 @@ async function loadUserProfile() {
     }
 
     try {
-        const API_URL = window.location.hostname === 'localhost' 
-            ? 'http://localhost:3000'
-            : 'https://boxes-vxnc.onrender.com';
-
-        const response = await fetch(`${API_URL}/api/profile`, {
+        const response = await fetch(`${API_URL}/api/auth/profile`, {
+            method: 'GET',
             headers: {
-                'Authorization': `Bearer ${token}`
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
             }
         });
 
@@ -27,17 +28,17 @@ async function loadUserProfile() {
         }
 
         const userData = await response.json();
+        console.log('Profile data:', userData);
+
+        // Update UI with user data
         document.getElementById('userDisplayName').textContent = userData.username;
         document.getElementById('accountTypeDisplay').textContent = userData.accountType;
-        
-        // Initialize form data
         document.getElementById('username').value = userData.username;
         document.getElementById('email').value = userData.email;
+        
     } catch (error) {
-        // Log any errors that occur during profile loading
         console.error('Profile error:', error);
-        localStorage.clear();
-        window.location.href = `../Html/LoginPage.html`;
+        alert('Failed to load profile');
     }
 }
 
