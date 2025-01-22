@@ -31,6 +31,7 @@ document.getElementById('loginForm').appendChild(errorDisplay);
 document.getElementById('loginForm').addEventListener('submit', async (e) => {
     e.preventDefault();
     errorDisplay.textContent = ''; // Clear previous errors
+    showLoadingSpinner();
     
     try {
         const response = await fetch(`${API_URL}/api/auth/login`, {
@@ -50,6 +51,7 @@ document.getElementById('loginForm').addEventListener('submit', async (e) => {
         // Check response status first
         if (!response.ok) {
             errorDisplay.textContent = data.error || 'Incorrect email or password';
+            hideLoadingSpinner();
             return; // Stop execution here if login failed
         }
 
@@ -58,16 +60,15 @@ document.getElementById('loginForm').addEventListener('submit', async (e) => {
             localStorage.setItem('authToken', data.token);
             localStorage.setItem('username', data.username);
             localStorage.setItem('accountType', data.accountType);
-            setTimeout(() => {
-                window.location.href = '../Html/homePage.html';
-                hideLoadingSpinner();
-            }, 5000);
+            window.location.href = '../Html/homePage.html';
         } else {
             errorDisplay.textContent = 'Login failed. Invalid response from server.';
         }
     } catch (error) {
         console.error('Login error:', error);
         errorDisplay.textContent = 'Server error. Please try again.';
+    } finally {
+        hideLoadingSpinner();
     }
 });
 
@@ -82,6 +83,8 @@ document.getElementById('loginForm').addEventListener('submit', async (e) => {
  */
 document.getElementById('registerForm').addEventListener('submit', async (e) => {
     e.preventDefault();
+    errorDisplay.textContent = '';
+    showLoadingSpinner();
     
     const API_URL = window.location.hostname === 'localhost' 
         ? 'http://localhost:3000'
@@ -119,6 +122,8 @@ document.getElementById('registerForm').addEventListener('submit', async (e) => 
     } catch (error) {
         console.error('Registration error:', error);
         alert('Registration failed: ' + error.message);
+    } finally {
+        hideLoadingSpinner();
     }
 });
 
@@ -179,14 +184,8 @@ function hideLoadingSpinner() {
     if (spinner) spinner.style.display = 'none';
 }
 
-// Update the DOMContentLoaded event
+// Remove auto-redirect on DOMContentLoaded
 window.addEventListener('DOMContentLoaded', () => {
-    const token = localStorage.getItem('authToken');
-    if (token) {
-        showLoadingSpinner();
-        setTimeout(() => {
-            window.location.href = '../Html/homePage.html';
-            hideLoadingSpinner();
-        }, 5000);
-    }
+    // Clear any existing tokens
+    localStorage.clear();
 });
