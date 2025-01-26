@@ -21,27 +21,20 @@ sendButton.addEventListener('click', async () => {
     sendButton.disabled = true;
 
     try {
-        // Read file as text
-        const fileReader = new FileReader();
-        fileReader.onload = async (e) => {
-            const fileContent = e.target.result;
+        // Analyze file
+        const analysis = await analyzeFile(selectedFile);
 
-            // Analyze file
-            const analysis = await analyzeFile(fileContent);
+        // Hide loading
+        loadingIndicator.style.display = 'none';
 
-            // Hide loading
-            loadingIndicator.style.display = 'none';
+        // Display result
+        analysisResult.innerHTML = `
+            <h3>File Analysis</h3>
+            <p>${analysis}</p>
+        `;
 
-            // Display result
-            analysisResult.innerHTML = `
-                <h3>File Analysis</h3>
-                <p>${analysis}</p>
-            `;
-
-            // Reset button
-            sendButton.disabled = false;
-        };
-        fileReader.readAsText(selectedFile);
+        // Reset button
+        sendButton.disabled = false;
     } catch (error) {
         loadingIndicator.style.display = 'none';
         analysisResult.innerHTML = `Error: ${error.message}`;
@@ -49,43 +42,36 @@ sendButton.addEventListener('click', async () => {
     }
 });
 
-async function analyzeFile(content) {
-    const openai = new OpenAI({
-        apiKey: process.env.OPENAI_API_KEY,
-        timeout: 30000
-    });
-    
+const API_URL = window.location.hostname === 'localhost' 
+    ? 'http://localhost:3000'
+    : 'https://boxes-vxnc.onrender.com';
+
+async function analyzeFile(file) {
+    const token = localStorage.getItem('authToken');
+    if (!token) {
+        throw new Error('Authentication required');
+    }
+
+    const formData = new FormData();
+    formData.append('file', file);
+
     try {
-        const response = await fetch('https://api.openai.com/v1/chat/completions', {
+        const response = await fetch(`${API_URL}/api/upload`, {
             method: 'POST',
             headers: {
-                'Authorization': `Bearer ${apiKey}`,
-                'Content-Type': 'application/json'
+                'Authorization': `Bearer ${token}`
             },
-            body: JSON.stringify({
-                model: "gpt-3.5-turbo",
-                messages: [
-                    {
-                        role: "system", 
-                        content: "Analyze the following document and provide a concise overview:"
-                    },
-                    {
-                        role: "user",
-                        content: content
-                    }
-                ]
-            })
+            body: formData
         });
 
         if (!response.ok) {
-            const errorBody = await response.text();
-            throw new Error(`API Error: ${response.status} - ${errorBody}`);
+            throw new Error('Failed to analyze file');
         }
 
         const data = await response.json();
-        return data.choices[0].message.content;
+        return data.analysis;
     } catch (error) {
-        console.error('Detailed Error:', error);
-        return `Analysis failed: ${error.message}`;
+        console.error('Analysis error:', error);
+        throw error;
     }
 }
