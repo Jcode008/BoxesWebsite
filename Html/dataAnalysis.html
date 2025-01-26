@@ -2,59 +2,16 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>File Upload</title>
-    <link rel="stylesheet" href="../CSS/style.css">
+    <title>File Analyzer</title>
     <link rel="stylesheet" href="../CSS/dataAnalysisStyle.css">
 </head>
-
 <body>
-    <div class="upload-container">
-        <h1>File Upload</h1>
-        <form id="uploadForm" class="upload-form">
-            <input type="file" id="fileInput" class="file-input" required>
-            <button type="submit" class="submit-btn">Upload File</button>
-        </form>
-        <div id="status"></div>
+    <div class="container">
+        <h1>File Analyzer</h1>
+        <input type="file" id="file-upload" accept=".txt,.pdf,.docx,.md">
+        <div id="loading">Analyzing file...</div>
+        <div id="analysis-result"></div>
     </div>
-
-    <script>
-        document.getElementById('uploadForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            
-            const fileInput = document.getElementById('fileInput');
-            const statusDiv = document.getElementById('status');
-            const file = fileInput.files[0];
-            
-            if (!file) {
-                statusDiv.textContent = 'Please select a file';
-                statusDiv.className = 'error';
-                return;
-            }
-
-            const formData = new FormData();
-            formData.append('file', file);
-
-            try {
-                const response = await fetch('http://localhost:5000/upload', {
-                    method: 'POST',
-                    body: formData
-                });
-
-                const result = await response.json();
-                
-                if (response.ok) {
-                    statusDiv.textContent = 'File uploaded successfully!';
-                    statusDiv.className = 'success';
-                } else {
-                    statusDiv.textContent = `Upload failed: ${result.error}`;
-                    statusDiv.className = 'error';
-                }
-            } catch (error) {
-                statusDiv.textContent = `Error: ${error.message}`;
-                statusDiv.className = 'error';
-            }
-        });
-    </script>
+    <script src="dataanalysis.js"></script>
 </body>
 </html>
