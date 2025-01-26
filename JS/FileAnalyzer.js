@@ -50,7 +50,10 @@ sendButton.addEventListener('click', async () => {
 });
 
 async function analyzeFile(content) {
-    const apiKey = 'YOUR_OPENAI_API_KEY';
+    const openai = new OpenAI({
+        apiKey: process.env.OPENAI_API_KEY,
+        timeout: 30000
+    });
     
     try {
         const response = await fetch('https://api.openai.com/v1/chat/completions', {
