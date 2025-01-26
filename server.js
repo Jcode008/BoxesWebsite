@@ -33,6 +33,18 @@ try {
     console.error('OpenAI initialization error:', error);
 }
 
+// MongoDB connection
+mongoose.connect(process.env.MONGODB_URI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+    serverSelectionTimeoutMS: 30000 // Increase timeout to 30 seconds
+})
+.then(() => console.log('MongoDB Connected'))
+.catch(err => {
+    console.error('MongoDB Connection Error:', err);
+    process.exit(1);
+});
+
 // Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/chat', chatRoutes);
