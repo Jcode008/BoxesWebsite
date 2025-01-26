@@ -26,19 +26,29 @@ async function sendMessage() {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${token}`
                 },
-                body: JSON.stringify({ message: messageText })
+                body: JSON.stringify({ 
+                    message: messageText,
+                    role: "user"
+                })
             });
 
-            if (!response.ok) throw new Error('Failed to get response');
-            
             const data = await response.json();
             typingIndicator.remove();
 
-            if (data.error) throw new Error(data.error);
-            appendMessage(`Bot: ${data.content}`, 'bot-message');
+            if (!response.ok) {
+                throw new Error(data.error || 'Failed to get response');
+            }
+
+            const botResponse = data.content || data.message;
+            if (!botResponse) {
+                throw new Error('Empty response from bot');
+            }
+
+            appendMessage(`Bot: ${botResponse}`, 'bot-message');
+            
         } catch (error) {
             console.error('Chat error:', error);
-            appendMessage('Error: Could not get response', 'error-message');
+            appendMessage(`Error: ${error.message}`, 'error-message');
         }
     }
 }
@@ -52,10 +62,10 @@ function showTypingIndicator() {
 }
 
 function appendMessage(message, className) {
-    const messageElement = document.createElement('div');
-    messageElement.classList.add('message', className);
-    messageElement.textContent = message;
-    chatBox.appendChild(messageElement);
+    const messageDiv = document.createElement('div');
+    messageDiv.classList.add('message', className);
+    messageDiv.textContent = message;
+    chatBox.appendChild(messageDiv);
     chatBox.scrollTop = chatBox.scrollHeight;
 }
 
