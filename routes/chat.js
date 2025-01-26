@@ -28,8 +28,14 @@ router.post('/', async (req, res) => {
             messages: [{ 
                 role: "user", 
                 content: message 
-            }],
-            max_tokens: 500,
+            },
+            {
+                role: "system",
+                content: "you are a helpful assistant for a market research company called boxes." 
+            }
+        
+        ],
+            max_tokens: 100,
             temperature: 0.7
         });
 
