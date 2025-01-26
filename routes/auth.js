@@ -4,6 +4,7 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const User = require('../models/User');
 
+// Login route
 router.post('/login', async (req, res) => {
     try {
         const { email, password } = req.body;
@@ -30,8 +31,12 @@ router.post('/login', async (req, res) => {
             { expiresIn: '1h' }
         );
 
+        console.log('Login successful:', { token, username: user.username, accountType: user.accountType });
+
         res.json({
-            token
+            token,
+            username: user.username,
+            accountType: user.accountType
         });
     } catch (error) {
         console.error('Login error:', error);
@@ -39,10 +44,9 @@ router.post('/login', async (req, res) => {
     }
 });
 
+// Register route
 router.post('/register', async (req, res) => {
     try {
-        console.log('Register request:', req.body);
-        
         const { username, email, password, accountType } = req.body;
         
         if (!username || !email || !password) {
@@ -65,13 +69,15 @@ router.post('/register', async (req, res) => {
             username,
             email,
             password: hashedPassword,
-            accountType: accountType || 'user'
+            accountType: accountType || 'standard'
         });
 
         await user.save();
-        console.log('User registered:', username);
         
-        res.status(201).json({ message: 'Registration successful' });
+        res.status(201).json({ 
+            message: 'User registered successfully',
+            uuid: user.uuid
+        });
     } catch (error) {
         console.error('Registration error:', error);
         res.status(500).json({ error: error.message });

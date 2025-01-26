@@ -28,11 +28,11 @@ document.getElementById('loginForm').appendChild(errorDisplay);
  * 
  * @param {Event} e - The event object.
  */
-document.getElementById('loginForm').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    errorDisplay.textContent = ''; // Clear previous errors
+document.getElementById('loginForm').addEventListener('submit', async (event) => {
+    event.preventDefault();
+    const errorDisplay = document.getElementById('errorDisplay');
     showLoadingSpinner();
-    
+
     try {
         const response = await fetch(`${API_URL}/api/auth/login`, {
             method: 'POST',
