@@ -65,7 +65,8 @@ async function analyzeFile(file) {
         });
 
         if (!response.ok) {
-            throw new Error('Failed to analyze file');
+            const errorData = await response.json();
+            throw new Error(errorData.error || 'Failed to analyze file');
         }
 
         const data = await response.json();

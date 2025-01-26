@@ -2,15 +2,25 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const mongoose = require('mongoose');
-const authRoutes = require('./routes/auth');
-const { OpenAI } = require('openai');  // Fix import
 const path = require('path');
+const { OpenAI } = require('openai');
+const authRoutes = require('./routes/auth');
+const chatRoutes = require('./routes/chat');
+const profileRoutes = require('./routes/profile');
+const fileUploadRoutes = require('./routes/fileUpload'); // Ensure this import
 
 const app = express();
 
 // Middleware
-app.use(cors());
+app.use(cors({
+    origin: ['https://boxes-vxnc.onrender.com', 'http://localhost:3000'],
+    methods: ['GET', 'POST', 'PATCH', 'DELETE'],
+    credentials: true,
+    allowedHeaders: ['Content-Type', 'Authorization', 'Accept']
+}));
+
 app.use(express.json());
+app.use(express.static(path.join(__dirname)));
 
 // MongoDB Connection
 mongoose.connect(process.env.MONGODB_URI, {
@@ -30,16 +40,6 @@ console.log('Checking environment:', {
     environment: process.env.NODE_ENV
 });
 
-// Middleware
-app.use(cors({
-    origin: ['https://boxes-vxnc.onrender.com', 'http://localhost:3000'],
-    methods: ['GET', 'POST', 'PATCH', 'DELETE'],
-    credentials: true,
-    allowedHeaders: ['Content-Type', 'Authorization', 'Accept']
-}));
-app.use(express.json());
-app.use(express.static(path.join(__dirname)));
-
 // OpenAI setup with error handling
 let openai;
 try {
@@ -53,8 +53,9 @@ try {
 
 // Routes
 app.use('/api/auth', authRoutes);
-app.use('/api/chat', require('./routes/chat'));
-app.use('/api/profile', require('./routes/profile'));
+app.use('/api/chat', chatRoutes);
+app.use('/api/profile', profileRoutes);
+app.use('/api/upload', fileUploadRoutes); // Ensure this route
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
