@@ -77,9 +77,15 @@ async function analyzeFile(content) {
             })
         });
 
+        if (!response.ok) {
+            const errorBody = await response.text();
+            throw new Error(`API Error: ${response.status} - ${errorBody}`);
+        }
+
         const data = await response.json();
         return data.choices[0].message.content;
     } catch (error) {
+        console.error('Detailed Error:', error);
         return `Analysis failed: ${error.message}`;
     }
 }
