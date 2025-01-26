@@ -1,8 +1,18 @@
+const API_URL = window.location.hostname === 'localhost' 
+    ? 'http://localhost:3000'
+    : 'https://boxes-vxnc.onrender.com';
+
 const chatBox = document.getElementById('chatBox');
 const userInput = document.getElementById('userInput');
 
 async function sendMessage() {
     const messageText = userInput.value.trim();
+    const token = localStorage.getItem('authToken');
+
+    if (!token) {
+        appendMessage('Error: Please login first', 'error-message');
+        return;
+    }
 
     if (messageText) {
         try {
@@ -10,19 +20,24 @@ async function sendMessage() {
             userInput.value = '';
 
             const typingIndicator = showTypingIndicator();
-            const response = await fetch('http://localhost:3000/chat', {
+            const response = await fetch(`${API_URL}/api/chat`, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: { 
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
                 body: JSON.stringify({ message: messageText })
             });
 
+            if (!response.ok) throw new Error('Failed to get response');
+            
             const data = await response.json();
             typingIndicator.remove();
 
             if (data.error) throw new Error(data.error);
             appendMessage(`Bot: ${data.content}`, 'bot-message');
         } catch (error) {
-            console.error('Error:', error);
+            console.error('Chat error:', error);
             appendMessage('Error: Could not get response', 'error-message');
         }
     }
