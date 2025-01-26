@@ -1,14 +1,24 @@
 const fileUpload = document.getElementById('file-upload');
+const sendButton = document.getElementById('send-file');
 const analysisResult = document.getElementById('analysis-result');
 const loadingIndicator = document.getElementById('loading');
 
-fileUpload.addEventListener('change', async (event) => {
-    const file = event.target.files[0];
-    if (!file) return;
+let selectedFile = null;
+
+fileUpload.addEventListener('change', (event) => {
+    selectedFile = event.target.files[0];
+    if (selectedFile) {
+        sendButton.disabled = false;
+    }
+});
+
+sendButton.addEventListener('click', async () => {
+    if (!selectedFile) return;
 
     // Show loading
     loadingIndicator.style.display = 'block';
     analysisResult.innerHTML = '';
+    sendButton.disabled = true;
 
     try {
         // Read file as text
@@ -16,7 +26,7 @@ fileUpload.addEventListener('change', async (event) => {
         fileReader.onload = async (e) => {
             const fileContent = e.target.result;
 
-            // Simulate OpenAI API call (replace with actual API)
+            // Analyze file
             const analysis = await analyzeFile(fileContent);
 
             // Hide loading
@@ -27,22 +37,20 @@ fileUpload.addEventListener('change', async (event) => {
                 <h3>File Analysis</h3>
                 <p>${analysis}</p>
             `;
+
+            // Reset button
+            sendButton.disabled = false;
         };
-        fileReader.readAsText(file);
+        fileReader.readAsText(selectedFile);
     } catch (error) {
         loadingIndicator.style.display = 'none';
         analysisResult.innerHTML = `Error: ${error.message}`;
+        sendButton.disabled = false;
     }
 });
 
 async function analyzeFile(content) {
-    // IMPORTANT: Replace with actual OpenAI API call
-    // This is a placeholder simulation
-    const openai = new OpenAI({
-        apiKey: process.env.OPENAI_API_KEY,
-        timeout: 30000
-    });
-    
+    const apiKey = 'YOUR_OPENAI_API_KEY';
     
     try {
         const response = await fetch('https://api.openai.com/v1/chat/completions', {
