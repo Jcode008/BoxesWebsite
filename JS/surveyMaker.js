@@ -1,19 +1,18 @@
-
-
-const uri = process.env.MONGODB_URI;
-
-
+const API_URL = window.location.hostname === 'localhost' 
+    ? 'http://localhost:3000'
+    : 'https://boxes-vxnc.onrender.com';
 
 let questionCounter = 0;
 let currentSurveyId = null;
 
 // Initialize when page loads
 document.addEventListener('DOMContentLoaded', () => {
+    currentSurveyId = Date.now().toString();
     refreshSurveyList();
 });
 
-function createNewSurvey() {
-    let currentSurveyId = Date.now().toString();
+async function createNewSurvey() {
+    currentSurveyId = Date.now().toString();
     document.getElementById('survey-list-section').classList.add('hidden');
     document.getElementById('survey-builder').classList.remove('hidden');
     clearSurveyBuilder();
@@ -32,75 +31,29 @@ function returnToList() {
     refreshSurveyList();
 }
 
-function getSurveyList() {
-    const surveys = localStorage.getItem('surveyList');
-    return surveys ? JSON.parse(surveys) : [];
-}
-
-function refreshSurveyList() {
+async function refreshSurveyList() {
     const surveyList = document.getElementById('survey-list');
-    const surveys = getSurveyList();
     
-    surveyList.innerHTML = surveys.length === 0 ? 
-        '<p>No surveys created yet. Click "Create New Survey" to get started!</p>' : '';
+    try {
+        const response = await fetch(`${API_URL}/api/surveys`, {
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('authToken')}`
+            }
+        });
+        
+        if (!response.ok) throw new Error('Failed to fetch surveys');
+        
+        const surveys = await response.json();
+        surveyList.innerHTML = surveys.length === 0 ? '<p>No surveys available</p>' : '';
 
-    surveys.forEach(survey => {
-        const surveyItem = document.createElement('div');
-        surveyItem.className = 'survey-item';
-        surveyItem.innerHTML = `
-            <span class="survey-item-title">${survey.title || 'Untitled Survey'}</span>
-            <span class="survey-item-date">${new Date(parseInt(survey.id)).toLocaleDateString()}</span>
-            <button onclick="editSurvey('${survey.id}')" class="edit-btn">Edit</button>
-            <button onclick="deleteSurvey('${survey.id}')" class="delete-btn">Delete</button>
-        `;
-        surveyList.appendChild(surveyItem);
-    });
-}
-
-function editSurvey(surveyId) {
-    const surveys = getSurveyList();
-    const survey = surveys.find(s => s.id === surveyId);
-    if (!survey) return;
-
-    currentSurveyId = surveyId;
-    document.getElementById('survey-list-section').classList.add('hidden');
-    document.getElementById('survey-builder').classList.remove('hidden');
-    
-    // Load survey data
-    document.getElementById('survey-title').value = survey.title;
-    document.getElementById('questions').innerHTML = '';
-    questionCounter = 0;
-
-    survey.questions.forEach(question => {
-        if (question.type === 'multiple-choice') {
-            addMultipleChoice();
-            const questionDiv = document.querySelector('.question-container:last-child');
-            questionDiv.querySelector('.question-text').value = question.text;
-            
-            questionDiv.querySelector('.options-container').innerHTML = '';
-            question.options.forEach(optionText => {
-                const optionDiv = document.createElement('div');
-                optionDiv.className = 'option';
-                optionDiv.innerHTML = `
-                    <input type="text" value="${optionText}" class="option-text">
-                `;
-                questionDiv.querySelector('.options-container').appendChild(optionDiv);
-            });
-        } else {
-            addWrittenResponse();
-            const questionDiv = document.querySelector('.question-container:last-child');
-            questionDiv.querySelector('.question-text').value = question.text;
-        }
-    });
-}
-
-function deleteSurvey(surveyId) {
-    if (!confirm('Are you sure you want to delete this survey?')) return;
-    
-    const surveys = getSurveyList();
-    const updatedSurveys = surveys.filter(s => s.id !== surveyId);
-    localStorage.setItem('surveyList', JSON.stringify(updatedSurveys));
-    refreshSurveyList();
+        surveys.forEach(survey => {
+            const listItem = document.createElement('li');
+            listItem.textContent = survey.title;
+            surveyList.appendChild(listItem);
+        });
+    } catch (error) {
+        console.error('Error fetching surveys:', error);
+    }
 }
 
 async function saveSurvey() {
@@ -110,60 +63,35 @@ async function saveSurvey() {
         return;
     }
 
-
-
-    const client = new MongoClient(uri);
-
-    try{
-
-        const {MongoClient} = require('mongodb');
-        await client.connect();
-
-        const db = client.db('test');
-
-        const collection = db.collection('surveys');
-
+    try {
         const survey = {
             id: currentSurveyId,
             title: title,
-            questions: []
-             
+            questions: Array.from(document.querySelectorAll('.question-container')).map(questionDiv => ({
+                type: questionDiv.dataset.type,
+                text: questionDiv.querySelector('.question-text').value,
+                options: questionDiv.dataset.type === 'multiple-choice' 
+                    ? Array.from(questionDiv.querySelectorAll('.option-text')).map(opt => opt.value)
+                    : []
+            }))
         };
 
-        const result = await collection.insertOne(survey);
-        console.log(`Survey created with the following id: ${result.insertedId}`);
+        const response = await fetch(`${API_URL}/api/surveys`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem('authToken')}`
+            },
+            body: JSON.stringify(survey)
+        });
+
+        if (!response.ok) throw new Error('Failed to save survey');
+        
+        returnToList();
+    } catch (error) {
+        console.error('Error saving survey:', error);
+        alert('Failed to save survey');
     }
-    catch(e){
-        console.error(e);
-    }
-    
-
-    document.querySelectorAll('.question-container').forEach(questionDiv => {
-        const question = {
-            type: questionDiv.dataset.type,
-            text: questionDiv.querySelector('.question-text').value
-        };
-
-        if (question.type === 'multiple-choice') {
-            question.options = Array.from(questionDiv.querySelectorAll('.option-text'))
-                .map(option => option.value);
-        }
-
-        survey.questions.push(question);
-    });
-
-    // Update survey list
-    const surveys = getSurveyList();
-    const existingIndex = surveys.findIndex(s => s.id === currentSurveyId);
-    if (existingIndex >= 0) {
-        surveys[existingIndex] = survey;
-    } else {
-        surveys.push(survey);
-    }
-    
-    localStorage.setItem('surveyList', JSON.stringify(surveys));
-    alert('Survey saved successfully!');
-    returnToList();
 }
 
 // Original functions for adding questions and options
