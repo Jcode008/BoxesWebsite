@@ -1,3 +1,9 @@
+const {MongoClient} = require('mongodb');
+
+const uri = process.env.MONGODB_URI;
+
+
+
 let questionCounter = 0;
 let currentSurveyId = null;
 
@@ -97,18 +103,38 @@ function deleteSurvey(surveyId) {
     refreshSurveyList();
 }
 
-function saveSurvey() {
+async function saveSurvey() {
     const title = document.getElementById('survey-title').value;
     if (!title.trim()) {
         alert('Please enter a survey title');
         return;
     }
 
-    const survey = {
-        id: currentSurveyId,
-        title: title,
-        questions: []
-    };
+
+
+    const client = new MongoClient(uri);
+
+    try{
+        await client.connect();
+
+        const db = client.db('test');
+
+        const collection = db.collection('surveys');
+
+        const survey = {
+            id: currentSurveyId,
+            title: title,
+            questions: []
+             
+        };
+
+        const result = await collection.insertOne(survey);
+        console.log(`Survey created with the following id: ${result.insertedId}`);
+    }
+    catch(e){
+        console.error(e);
+    }
+    
 
     document.querySelectorAll('.question-container').forEach(questionDiv => {
         const question = {
