@@ -1,4 +1,4 @@
-const {MongoClient} = require('mongodb');
+
 
 const uri = process.env.MONGODB_URI;
 
@@ -115,6 +115,8 @@ async function saveSurvey() {
     const client = new MongoClient(uri);
 
     try{
+
+        const {MongoClient} = require('mongodb');
         await client.connect();
 
         const db = client.db('test');
