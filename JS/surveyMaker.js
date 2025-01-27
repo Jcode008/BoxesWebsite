@@ -13,7 +13,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 function createNewSurvey() {
-    currentSurveyId = Date.now().toString();
+    let currentSurveyId = Date.now().toString();
     document.getElementById('survey-list-section').classList.add('hidden');
     document.getElementById('survey-builder').classList.remove('hidden');
     clearSurveyBuilder();
